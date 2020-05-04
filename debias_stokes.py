@@ -97,7 +97,7 @@ def _interpolate_p_SNR(SNR_obs=None, minimize_kwargs=None,
     return interp1d(SNR_obs, SNR_true, **interp1d_kwargs)
 
 
-def _output_path(path, new_path='debaised_PI.fits'):
+def _output_path(path, new_path='debiased.fits'):
     """Returns the new output path."""
     return path.replace(path.split('/')[-1], new_path)
 
@@ -108,8 +108,14 @@ if __name__ == '__main__':
                         help='Path to the Stokes Q FITS cube.')
     parser.add_argument('-U', type=str,
                         help='Path to the Stokes U FITS cube.')
+    parser.add_argument('-N', default=15, type=int,
+                        help='Number of first and last channels to use when '
+                             + 'estimating the RMS of the Stokes Q and U '
+                             + 'cubes.')
     parser.add_argument('-rms', type=float,
                         help='RMS of the Stoke Q and U cubes.')
+    parser.add_argument('-outfile', default='debiased.fits', type=str,
+                        help='Filename of the saved FITS cube.')
     parser.add_argument('-overwrite', default=True, type=bool,
                         help='Overwrite existing files with the same name.')
     args = parser.parse_args()
@@ -127,9 +133,11 @@ if __name__ == '__main__':
     # Calculate the P_obs values.
     P_obs = np.hypot(cube_Q.data, cube_U.data)
     if args.rms is None:
-        print("Estimating QU rms based on first and last 15 channels.")
-        rms = np.mean([cube_Q.estimate_RMS(15), cube_U.estimate_RMS(15)])
-        print("sigma = {:.2f} mJy/beam".format(rms * 1e3))
+        rms = np.mean([cube_Q.estimate_RMS(args.N),
+                       cube_U.estimate_RMS(args.N)])
+        print("Estimated Q/U RMS based on the first and last "
+              + "{} channels: ".format(args.N)
+              + "{:.2f} mJy/beam".format(rms * 1e3))
     else:
         rms = args.rms
     SNR_obs = P_obs / rms
@@ -143,5 +151,5 @@ if __name__ == '__main__':
     # Save as a FITS file. Copying the header from one of the input cubes.
     header = fits.getheader(cube_Q.path, copy=True)
     header['comment'] = 'debiased polarized intensity'
-    fits.writeto(_output_path(args.Q), P_true, header,
+    fits.writeto(_output_path(args.Q, args.outfile), P_true, header,
                  overwrite=args.overwrite, output_verify='silentfix')
