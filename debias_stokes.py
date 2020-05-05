@@ -137,7 +137,7 @@ if __name__ == '__main__':
                        cube_U.estimate_RMS(args.N)])
         print("Estimated Q/U RMS based on the first and last "
               + "{} channels: ".format(args.N)
-              + "{:.2f} mJy/beam".format(rms * 1e3))
+              + "{:.2f} mJy/beam.".format(rms * 1e3))
     else:
         rms = args.rms
     SNR_obs = P_obs / rms
