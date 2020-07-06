@@ -154,7 +154,7 @@ def infer_P0(P, estimator='probable', quantile=0.68):
 
 def _get_interp_P0(P=None, estimator='probable', interp1d_kwargs=None):
     """
-    Returns two ``interp1d`` instances to interpoalte between a pre-calculated
+    Returns two ``interp1d`` instances to interpolate between a pre-calculated
     grid of `P -> P0` and `P -> dP0` transformations. The defaults for this
     function allow for a good coverage of the expected `P` values.
 
@@ -197,7 +197,7 @@ if __name__ == '__main__':
                         help='Estimator to use for the debiasing. Either '
                              + '`probable` or `likelihood`.')
     parser.add_argument('-rms', type=float,
-                        help='RMS of the Stoke Q and U cubes.')
+                        help='RMS of the Stokes Q and U cubes.')
     parser.add_argument('-overwrite', default=True, type=bool,
                         help='Overwrite existing files with the same name.')
     args = parser.parse_args()
@@ -231,7 +231,7 @@ if __name__ == '__main__':
 
     # Check shapes.
     if SNR_obs.shape != cube_Q.data.shape:
-        raise ValueError("Wrong shape for `SNR_obs`: {}".frmat(SNR_obs.shape))
+        raise ValueError("Wrong shape for `SNR_obs`: {}".format(SNR_obs.shape))
     if SNR_obs.ndim != 3:
         SNR_obs = np.array([SNR_obs])
 
