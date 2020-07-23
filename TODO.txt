@@ -1,0 +1,13 @@
+BUGS
+-Central 1-2 beams of IM Lup test show that the debias_stokes produces HIGHER POLI values than the original file.  All debiased values should be lower
+-Implement spelling corrections from submitted change request (Useage, Stoke, interpoalte, interp1d_kwrgs, etc.)
+
+TODO
+-Make it installable by conda
+-Run it within iPython (so that my PYTHONPATH works)
+-Implement primary beam correction
+-Two TODO statements from Rich already in the code
+
+QUESTIONS
+-Remove dependence on gofish?
+-Remove the two debiasing options and make "most probable" the only one?
