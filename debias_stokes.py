@@ -5,7 +5,7 @@ Debiasing script based on Chat Hull's scripts, updated to Python 3. Does not
 take into account any sort of primary beam correction which must be applied
 afterwards.
 
-Useage:
+Usage:
 
 Should be a simple command line procedure:
 
@@ -154,7 +154,7 @@ def infer_P0(P, estimator='probable', quantile=0.68):
 
 def _get_interp_P0(P=None, estimator='probable', interp1d_kwargs=None):
     """
-    Returns two ``interp1d`` instances to interpoalte between a pre-calculated
+    Returns two ``interp1d`` instances to interpolate between a pre-calculated
     grid of `P -> P0` and `P -> dP0` transformations. The defaults for this
     function allow for a good coverage of the expected `P` values.
 
@@ -164,7 +164,7 @@ def _get_interp_P0(P=None, estimator='probable', interp1d_kwargs=None):
         P (optional[array]): Array of observed polarization values normalized
             by the RMS measured in the Q and U components.
         estimator (optional[str]): Estimator to use for the inference of `P0`.
-        interp1d_kwrgs (optional[dict]): Dictionary of keyword arguments to
+        interp1d_kwargs (optional[dict]): Dictionary of keyword arguments to
             pass to `interp1d`.
 
     Returns:
@@ -197,7 +197,7 @@ if __name__ == '__main__':
                         help='Estimator to use for the debiasing. Either '
                              + '`probable` or `likelihood`.')
     parser.add_argument('-rms', type=float,
-                        help='RMS of the Stoke Q and U cubes.')
+                        help='RMS of the Stokes Q and U cubes.')
     parser.add_argument('-overwrite', default=True, type=bool,
                         help='Overwrite existing files with the same name.')
     args = parser.parse_args()
