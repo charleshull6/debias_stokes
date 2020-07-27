@@ -233,7 +233,7 @@ if __name__ == '__main__':
 
     # Check shapes
     if SNR_obs.shape != cube_Q.data.shape:
-        raise ValueError("Wrong shape for `SNR_obs`: {}".frmat(SNR_obs.shape))
+        raise ValueError("Wrong shape for `SNR_obs`: {}".format(SNR_obs.shape))
     if SNR_obs.ndim != 3:
         SNR_obs = np.array([SNR_obs])
 
