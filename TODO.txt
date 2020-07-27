@@ -1,13 +1,25 @@
 BUGS
 -Central 1-2 beams of IM Lup test show that the debias_stokes produces HIGHER POLI values than the original file.  All debiased values should be lower
--Implement spelling corrections from submitted change request (Useage, Stoke, interpoalte, interp1d_kwrgs, etc.)
-
-TODO
--Make it installable by conda
--Run it within iPython (so that my PYTHONPATH works)
--Implement primary beam correction
--Two TODO statements from Rich already in the code
+- _CDF is never called
+- _PPF is never called
+-Should infer_P0 be _infer_P0?
 
 QUESTIONS
+- _maxP() says "Function to minimize," but it actually returns a single value...I think...?  
+- _maxP() uses minimize(), but _nL doesn't use minimize()
+-How does _infer_dP0 work?
+-How does _get_interp_P0 work?
+# Check shapes:
+  -How would SNR_obs.shape ever != cube_Q.data.shape ?
+  -Why do you turn SNR_obs into an array if SNR_obs.ndim != 3 ?
+-Why do you use args in minimize(), and what does it do?
+
+TODO
+-Implement primary beam correction
+-Group functions based on whether they're related to Vaillancourt or Wardle & Kronberg
+-Make it installable by conda
+-Run it within iPython (so that my PYTHONPATH works)
+-Two TODO statements from Rich already in the code
 -Remove dependence on gofish?
 -Remove the two debiasing options and make "most probable" the only one?
+
