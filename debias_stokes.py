@@ -70,7 +70,7 @@ def _PPF(q, B):
 
 def _L(P0, P):
     """
-    The likelihood of P0 given P, L(P0|P), from Vaillancourt 2006.
+    The likelihood of P0 given P, L(P0|P), from Vaillancourt (2006).
     """
     L = _PDF(P, P0) / P / np.sqrt(np.pi / 2.0)
     return L / np.exp(-P**2 / 4.0) / i0(P**2 / 4.0)
@@ -85,7 +85,8 @@ def _nL(P0, P):
 
 def _maxP(P0, P):
     """
-    Function to minimize to infer P0 such that ``max(F(P|P0)) == P``.
+    Function to minimize to infer P0 such that ``max(F(P|P0)) == P``, from
+    Wardle & Kronberg (1974).
     """
     maxP = minimize(_nPDF, x0=P0, args=P0, method='Nelder-Mead')
     return abs(maxP.x[0] - P)
@@ -105,25 +106,26 @@ def infer_P0(P, estimator='probable', quantile=0.68):
     polarization, `P0` and the associated uncertainty, `dP0`, defined as the
     range `P0 +/- dP0` which encompasses 68% of the distribution F(P0|P).
 
-    Two estimators are possible, for the inference of `P0`, the maximum
-    likelihood, ``estimator='likelihood'``, or the most probable,
-    ``estimator='probable'``.
+    Two estimators are possible for the inference of `P0`: the maximum
+    likelihood (``estimator='likelihood'``) and the most probable
+    (``estimator='probable'``).
 
-    For each of these, if `P < threshold`, where the thresholds are `1` for the
-    most probable estimator and `sqrt(2)` for the maximum likelihood estimator,
-    `P0 = 0`.
+    For each of these, if `P < threshold`, where the thresholds are `sqrt(2)` 
+    for the maximum likelihood estimator and `1` for the most probable 
+    estimator, then `P0 = 0`.
 
     Args:
         P (float): The observed polarization value normalised by the
-            uncertainty measured as the Q/U RMS.
+            uncertainty, defined as the RMS noise value in the Q and U maps.
         estimator (optional[str]): The estimator used for the inference of
-            `P0`, either ``'probable'``, the default, or ``'likelihood'``.
+            `P0`, either ``'probable'`` (the default) or ``'likelihood'``.
         quantile (optional[float]): The quantile used to define the
-            uncertainties on ``P0``. The default, 0.68, is equivlant to 1
-            sigma for Normal distributions.
+            uncertainties on ``P0``. The default, 0.68, is equivlant to 
+            1 sigma for Normal distributions.
 
     Returns:
-        P0, dP0 (float, float): The inferred true polarization and uncertainty.
+        P0, dP0 (float, float): The inferred true polarization and 
+            its associated uncertainty.
     """
 
     # Check the estimator.
@@ -134,7 +136,7 @@ def infer_P0(P, estimator='probable', quantile=0.68):
     else:
         raise ValueError("Unknown estimator: '{}'.".format(estimator))
 
-    # Calculate the underlying polarization, P0.
+    # Calculate the true polarization, P0.
     if func is not None:
         P0 = minimize(func, x0=P, args=P, method='Nelder-Mead')
         if not P0.success:
@@ -162,7 +164,7 @@ def _get_interp_P0(P=None, estimator='probable', interp1d_kwargs=None):
 
     Args:
         P (optional[array]): Array of observed polarization values normalized
-            by the RMS measured in the Q and U components.
+            by the RMS noise values measured in the Q and U maps.
         estimator (optional[str]): Estimator to use for the inference of `P0`.
         interp1d_kwargs (optional[dict]): Dictionary of keyword arguments to
             pass to `interp1d`.
@@ -197,7 +199,7 @@ if __name__ == '__main__':
                         help='Estimator to use for the debiasing. Either '
                              + '`probable` or `likelihood`.')
     parser.add_argument('-rms', type=float,
-                        help='RMS of the Stokes Q and U cubes.')
+                        help='RMS noise in the Stokes Q and U maps.')
     parser.add_argument('-overwrite', default=True, type=bool,
                         help='Overwrite existing files with the same name.')
     args = parser.parse_args()
@@ -217,7 +219,7 @@ if __name__ == '__main__':
     if args.rms is None and P_obs.ndim == 3:
         rms = np.mean([cube_Q.estimate_RMS(args.N),
                        cube_U.estimate_RMS(args.N)])
-        print("Estimated Q/U RMS based on the first and last "
+        print("Estimated Q and U RMS noise based on the first and last "
               + "{} channels: ".format(args.N)
               + "{:.2f} mJy/beam.".format(rms * 1e3))
     elif args.rms is None and P_obs.ndim == 2:
@@ -229,7 +231,7 @@ if __name__ == '__main__':
         rms = args.rms
     SNR_obs = P_obs / rms
 
-    # Check shapes.
+    # Check shapes
     if SNR_obs.shape != cube_Q.data.shape:
         raise ValueError("Wrong shape for `SNR_obs`: {}".frmat(SNR_obs.shape))
     if SNR_obs.ndim != 3:
